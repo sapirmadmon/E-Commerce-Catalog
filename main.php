@@ -12,7 +12,8 @@
 <body>
 	<br />
 	<div class="container" style="width: 80%;">
-		<h3>E-Commerce Catalog - Product items</h3>
+		<h2>E-Commerce Catalog</h2>
+		<h4>Products items</h4>
 		<br />
 		<div class="table-responsive">
 			<table class="table table-bordered">
@@ -22,13 +23,10 @@
 					<th>Price</th>
 					<th>Attributes</th>
 					<th>Categories</th>
-
 				</tr>  
                           <?php
 
-                        class Category
-                        {
-
+                        class Category {
                             public $counter;
 
                             public $id;
@@ -37,22 +35,15 @@
 
                             public $list_attributes;
 
-                            public function __construct($id, $title, $list_attributes)
-                            {
+                            public function __construct($id, $title, $list_attributes) {
                                 $this->id = $id;
                                 $this->title = $title;
                                 $this->counter = 0;
                                 $this->list_attributes = $list_attributes;
                             }
-
-                            public function __toString()
-                            {
-                                return $this->title;
-                            }
                         }
 
-                        class Product
-                        {
+                        class Product {
 
                             public $id;
 
@@ -64,8 +55,7 @@
 
                             public $labels;
 
-                            public function __construct($id, $title, $categories, $price, $labels)
-                            {
+                            public function __construct($id, $title, $categories, $price, $labels) {
                                 $this->id = $id;
                                 $this->title = $title;
                                 $this->categories = $categories;
@@ -74,8 +64,8 @@
                             }
                         }
 
-                        class Label
-                        {
+                        
+                        class Label {
 
                             public $id;
 
@@ -83,21 +73,14 @@
 
                             public $counter;
 
-                            public function __construct($id, $title)
-                            {
+                            public function __construct($id, $title){
                                 $this->id = $id;
                                 $this->title = $title;
                                 $this->counter = 0;
                             }
-
-                            public function __toString()
-                            {
-                                return $this->title. " ";
-                            }
                         }
 
-                        class Attribute
-                        {
+                        class Attribute {
 
                             public $id;
 
@@ -106,41 +89,35 @@
                             public $arrLabel;
 
                             // associative array
-                            public function __construct($id, $title, $arrLabel)
-                            {
+                            public function __construct($id, $title, $arrLabel) {
                                 $this->id = $id;
                                 $this->title = $title;
                                 $this->arrLabel = $arrLabel;
-                            }
-
-                            public function __toString()
-                            {
-                                return $this->title . ': ';
                             }
                         }
 
                         
 
-                        function getProductsList($obj, $allCategories)
-                        {
+                        function getProductsList($obj, $allCategories) {
                             $products = array();
                             $i = 0;
-                            foreach ($obj['products'] as $prod) {
+                            foreach ($obj['products'] as $prod) { // Loop on all products
                                 $categoryForItem = array();
                                 $attributesForItem = array(); 
 
-                                foreach ($prod['categories'] as $cat) {
+                                foreach ($prod['categories'] as $cat) { // Loop on all categories in product
                                     
-                                    $categoryForItem[$i] = $allCategories[$cat['id']];
+                                    $categoryForItem[$i] = $allCategories[$cat['id']]; 
                                     
-                                    foreach ($prod['labels'] as $labP) {
+                                    foreach ($prod['labels'] as $labP) {  //Loop on all labels in product
                                         
                                         foreach ($categoryForItem[$i]->list_attributes as $at) {
 
+                                            //cheack if label exist in arrLabel
                                             if(array_key_exists($labP ,$at->arrLabel)) {
                                                     
-                                                $key = $at->title;
-                                                $value = $at->arrLabel[$labP];
+                                                $key = $at->title; //key = title of attribute
+                                                $value = $at->arrLabel[$labP]; //value = label
                                                     
                                                 if (!array_key_exists($key, $attributesForItem)) { // if key did not exist in $attributesForItem - add it
                                                     $attributesForItem[$key] = array($labP => $value);
@@ -149,98 +126,111 @@
                                                     }
                                                 }
                                             }
-                                        }  
+                                        }    
                                         
                                         $i ++;
                                     }
-                                   
-
-                                // create the product
-                                    $products[$i] = new Product($prod['id'], $prod['title'], $categoryForItem, $prod['price'], $attributesForItem);
-                                    print '<pre>' . print_r( $products[$i], true) . '</pre>';
-                                
+  
+                                    // create product
+                                    $products[$i] = new Product($prod['id'], $prod['title'], $categoryForItem, $prod['price'], $attributesForItem);                               
                             }
-
                             return $products;
-                            
                         }
 
                         
-                        function getAllCategories($obj)
-                        {
-                            $categories_list = array();
-                            foreach ($obj['products'] as $prod) { // $prod - the current product
-
-                                foreach ($prod['categories'] as $cat) { // $cat - the current category in product
-
-                                    $id_cat = $cat['id'];
-
+                        
+                        function getCategories($obj) {
+                            $categories_list = array(); //get all categories (include counters for each category)
+                            
+                            foreach ($obj['products'] as $prod) { // Loop on all products
+   
+                                foreach ($prod['categories'] as $cat) { // Loop on all categories in product
+                                    
+                                    $id_cat = $cat['id']; //get id of the category
+                                    
                                     if (! array_key_exists($id_cat, $categories_list)) { // if the category *not* in $categories_list
+                                        
                                         $list_attributes = array();
-                                        $new_cat = new Category($cat['id'], $cat['title'], $list_attributes);
-                                        $categories_list[$id_cat] = $new_cat;
-                                        $categories_list[$id_cat]->counter ++;
-                                    } else {
-                                        $categories_list[$id_cat]->counter ++;
+                                        $new_cat = new Category($cat['id'], $cat['title'], $list_attributes); //create new category
+                                        $categories_list[$id_cat] = $new_cat; //add new category to $categories_list
+                                        $categories_list[$id_cat]->counter++;// counter ++;
+                                    
+                                    } else { //if the category in $categories_list - do counter++
+                                        $categories_list[$id_cat]-> counter ++;
                                     }
                                 }
                             }
-
-                            foreach ($obj['products'] as $prod) {
-                                foreach ($prod['categories'] as $cat) {
-
-                                    $cat_id = $cat['id'];
-                                    foreach ($prod['labels'] as $label) {
-
-                                        foreach ($obj['attributes'] as $attribute) {
-
-                                            $id_attribute = $attribute['id'];
-
-                                            foreach ($attribute['labels'] as $lab) {
-
-                                                if ($label == $lab['id']) {
-
-                                                    $id_label = $lab['id'];
-
-                                                    if (! array_key_exists($id_attribute, $categories_list[$cat_id]->list_attributes)) {
-                                                        // create new attribute and add him to $attributes_list
-                                                        $list_labels = array();
-                                                        $new_attribute = new Attribute($attribute['id'], $attribute['title'], $list_labels);
-                                                        $categories_list[$cat_id]->list_attributes[$id_attribute] = $new_attribute;
-
-                                                        // create new label and add it to arrLabel
-                                                        $new_label = new Label($lab['id'], $lab['title']);
-                                                        $categories_list[$cat_id]->list_attributes[$id_attribute]->arrLabel[$id_label] = $new_label;
-                                                        $categories_list[$cat_id]->list_attributes[$id_attribute]->arrLabel[$id_label]->counter ++;
-                                                    } 
-                                                    else {
-
-                                                        if (! (array_key_exists($id_label, $categories_list[$cat_id]->list_attributes[$id_attribute]->arrLabel))) {
-
-                                                            // create new label and add it to $list_labels
-                                                            $new_label = new Label($lab['id'], $lab['title']);
-                                                            $categories_list[$cat_id]->list_attributes[$id_attribute]->arrLabel[$id_label] = $new_label;
-                                                            $categories_list[$cat_id]->list_attributes[$id_attribute]->arrLabel[$id_label]->counter ++;
-                                                        } else {
-                                                            $categories_list[$cat_id]->list_attributes[$id_attribute]->arrLabel[$id_label]->counter ++;
-                                                        }
-                                                    }
-                                                }
+                            
+                            return $categories_list;
+                        }
+                        
+          
+                        
+                        function createListAttributes($obj, $category, $label) {
+                            
+                            foreach ($obj['attributes'] as $attribute) { //Loop on all attributes      
+                                $id_attribute = $attribute['id'];
+                                
+                                foreach ($attribute['labels'] as $lab) { //Loop on all labels per attribute
+                                    
+                                    if ($label == $lab['id']) { //if the label in the current product is equal to the label in attributes
+                                        $id_label = $lab['id'];
+                                        
+                                        //if $id_attribute not exist in $categories_list
+                                        if (! array_key_exists($id_attribute, $category->list_attributes)) {
+                                            // create new attribute and add him to $attributes_list
+                                            $list_labels = array();
+                                            $new_attribute = new Attribute($attribute['id'], $attribute['title'], $list_labels);
+                                            $category->list_attributes[$id_attribute] = $new_attribute;
+                                            
+                                            // create new label and add it to arrLabel
+                                            $new_label = new Label($lab['id'], $lab['title']);
+                                            $category->list_attributes[$id_attribute]->arrLabel[$id_label] = $new_label;
+                                            $category->list_attributes[$id_attribute]->arrLabel[$id_label]->counter ++;
+                                        }
+                                        else { //if $id_attribute already exist in $categories_list 
+                                            
+                                            //if $id_label not exist in list_attributes
+                                            if (! (array_key_exists($id_label, $category->list_attributes[$id_attribute]->arrLabel))) {
+                                                
+                                                // create new label and add it to $list_labels
+                                                $new_label = new Label($lab['id'], $lab['title']);
+                                                $category->list_attributes[$id_attribute]->arrLabel[$id_label] = $new_label;
+                                                $category->list_attributes[$id_attribute]->arrLabel[$id_label]->counter ++;
+                                            
+                                            } else { //if the label alrady in list_attributes - do counter to label++
+                                                $category->list_attributes[$id_attribute]->arrLabel[$id_label]->counter ++;
                                             }
                                         }
                                     }
                                 }
                             }
-
+                            
+                            return $category;
+                        }
+                        
+                        function getAllCategories($obj) {
+                            $categories_list = getCategories($obj);
+                            
+                            foreach ($obj['products'] as $prod) { // Loop on all products
+                                
+                                foreach ($prod['categories'] as $cat) { // Loop on all categories in product
+                                    $cat_id = $cat['id']; //get id of the category
+                                    
+                                    foreach ($prod['labels'] as $label) { //Loop on all labels in product     
+                                        $categories_list[$cat_id] = createListAttributes($obj, $categories_list[$cat_id],$label);
+                                    }
+                                }
+                            }
                             return $categories_list;
                         }
 
+                        
                         $data = file_get_contents("https://backend-assignment.bylith.com/index.php");
                         $obj = json_decode($data, true);
-                        print print_r($obj['products'], true);
                         
-                        $allCat = getAllCategories($obj);
-                        $allProduct = getProductsList($obj, $allCat);
+                        $allCat = getAllCategories($obj); //get ctegories list 
+                        $allProduct = getProductsList($obj, $allCat); //get product list
                         
 
                         //display table of all items
@@ -248,7 +238,7 @@
                             echo '<tr>';
                             echo '<td>' . $p->id . '</td>';
                             echo '<td>' . $p->title . '</td>';
-                            echo '<td>' . $p->price . '</td>';
+                            echo '<td>' . $p->price .'$'.'</td>';
                             echo '<td>';
                             foreach ($p->labels as  $at => $key)  {
                                 echo '<b>' . $at. ':</b> ';

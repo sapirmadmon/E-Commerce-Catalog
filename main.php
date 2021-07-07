@@ -8,13 +8,16 @@
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="css/mycss.css">
+
 </head>
 <body>
 	<br />
 	<div class="container" style="width: 80%;">
-		<h2>E-Commerce Catalog</h2>
-		<h4>Products items</h4>
+		<h1>E-Commerce Catalog</h1>
+		<h3>Products items</h3>
 		<br />
+		<div class="design_card">
 		<div class="table-responsive">
 			<table class="table table-bordered">
 				<tr>
@@ -259,6 +262,7 @@
                         ?>  
                      </table>
 		</div>
+	</div>
 	</div>
 	<br />
 </body>
